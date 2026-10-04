@@ -426,7 +426,7 @@ The custom flywheel/hub is the part that absorbs the difference between the two 
 
 ## 16. Open items
 
-*Parts list with costs, make/buy and status: [`BOM.xlsx`](BOM.xlsx).*
+*Detailed parts list (229 lines) with Have / Make / actual-price columns and a gearbox-route switch: [`BOM.xlsx`](BOM.xlsx). `Gearbox_Options.xlsx` keeps the RX-8 vs 8HP comparison.*
 
 - Get the Bremar TL70 scan; measure X, pilot depth and ring gear position on a real ZN6 box + flywheel
 - Confirm the 07K crank flange (6/8-bolt, center bore) and measure c
