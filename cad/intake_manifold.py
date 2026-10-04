@@ -50,12 +50,13 @@ TB_BORE          = 64.0     # stock 07K throttle body 07K133062A/B
 TB_BOLT_SQUARE   = 76.0     # PLACEHOLDER - measure the stock TB bolt pattern
 TB_BOLT_D        = 6.6
 
-INJ_BUNG_OD, INJ_BUNG_L, INJ_BORE = 19.0, 30.0, 14.0   # EV14 weld-in bung
+INJ_BUNG_OD, INJ_BUNG_L = 19.0, 25.0                   # weld-in injector bung, 3/4 in OD x 1 in
+INJ_SEAT_D, INJ_SEAT_DEPTH, INJ_THRU_D = 14.0, 10.0, 11.0  # 14 mm lower O-ring seat, then through-bore
 INJ_ANGLE_DEG    = 30.0     # bung axis vs the runner axis
 INJ_Y_FROM_FACE  = 50.0     # where the bung axis crosses the runner top wall, from the flange back face
 
-BUNG_SMALL = dict(od=15.9, h=12.7, spigot=11.5)    # Vibrant 11170, 1/8 NPT
-BUNG_LARGE = dict(od=25.4, h=15.0, spigot=19.0)    # Vibrant 11172, 3/8 NPT (brake booster)
+BUNG_SMALL = dict(od=15.9, h=12.7, bore=8.7)       # Vibrant 11170, 1/8-27 NPT: 5/8 in OD, tap drill 11/32 in
+BUNG_LARGE = dict(od=25.4, h=19.0, bore=14.7)      # Vibrant 11172, 3/8-18 NPT: 1 in OD, tap drill 37/64 in (brake booster)
 
 # ---------------------------------------------------------------- head flange from the user's STEP
 src = cq.importers.importStep(HEAD_FLANGE_STEP).solids().vals()[0]
@@ -120,10 +121,16 @@ def injector_bung(x):
     # the axis crosses the runner's top wall here
     y_wall = Y_FL + INJ_Y_FROM_FACE
     z_wall = PORT_Z + (ID_H / 2 + RUNNER_WALL if INJ_Y_FROM_FACE < TRANSITION_L else RUNNER_OD / 2)
-    start = cq.Vector(x, y_wall, z_wall) - d * 6          # start 6 mm inside the wall so the bung fuses to the tube
-    bung = cq.Solid.makeCylinder(INJ_BUNG_OD / 2, INJ_BUNG_L, start, d)
-    bore = cq.Solid.makeCylinder(INJ_BORE / 2, INJ_BUNG_L + 30, start - d * 25, d)
-    return cq.Workplane("XY").add(bung), cq.Workplane("XY").add(bore)
+    start = cq.Vector(x, y_wall, z_wall) - d * 12         # start inside the runner, then trim to its surface
+    tip = start + d * (INJ_BUNG_L + 12)                   # outer (fuel rail) end of the bung
+    bung = cq.Workplane("XY").add(cq.Solid.makeCylinder(INJ_BUNG_OD / 2, INJ_BUNG_L + 12, start, d))
+    # trim the base to the runner's outer surface (round section here)
+    bung = bung.cut(cq.Workplane("XZ", origin=(0, y_wall + 60, 0)).center(x, PORT_Z).circle(RUNNER_OD / 2).extrude(120))
+    seat = cq.Solid.makeCylinder(INJ_SEAT_D / 2, INJ_SEAT_DEPTH + 1, tip - d * INJ_SEAT_DEPTH, d)
+    chamfer = cq.Solid.makeCone(INJ_SEAT_D / 2, INJ_SEAT_D / 2 + 1.5, 1.5, tip - d * 1.5, d)
+    thru = cq.Solid.makeCylinder(INJ_THRU_D / 2, INJ_BUNG_L + 50, tip - d * (INJ_BUNG_L + 40), d)
+    bore = cq.Workplane("XY").add(seat).union(cq.Workplane("XY").add(chamfer)).union(cq.Workplane("XY").add(thru))
+    return bung, bore
 inj_bungs, inj_bores = zip(*[injector_bung(x) for x in PORT_X])
 runners = [r.cut(b) for r, b in zip(runners, inj_bores)]
 inj_bungs = [b.cut(br) for b, br in zip(inj_bungs, inj_bores)]
@@ -193,8 +200,10 @@ tb_plate = tb_plate.cut(cq.Workplane("XY", origin=(front_x, Y_PF + PLENUM_FLANGE
 # ---------------------------------------------------------------- NPT bungs on top of the plenum
 def bung(x, spec):
     top_z = PORT_Z + R
-    b = cq.Workplane("XY", origin=(x, Y_AX, top_z - 3)).circle(spec["od"] / 2).extrude(spec["h"] + 3)
-    hole = cq.Workplane("XY", origin=(x, Y_AX, top_z - PLENUM_WALL - 2)).circle(spec["spigot"] / 2).extrude(spec["h"] + 10)
+    b = cq.Workplane("XY", origin=(x, Y_AX, top_z - 4)).circle(spec["od"] / 2).extrude(spec["h"] + 4)
+    # seat the bung on the curved tube surface
+    b = b.cut(cq.Workplane("YZ", origin=(x - spec["od"], Y_AX, PORT_Z)).circle(R).extrude(2 * spec["od"]))
+    hole = cq.Workplane("XY", origin=(x, Y_AX, top_z - PLENUM_WALL - 2)).circle(spec["bore"] / 2).extrude(spec["h"] + 10)
     return b.cut(hole), hole
 bung_specs = [(X_MID - 150, BUNG_SMALL), (X_MID - 75, BUNG_SMALL), (X_MID, BUNG_LARGE), (X_MID + 75, BUNG_SMALL), (X_MID + 150, BUNG_SMALL)]
 bungs = []
