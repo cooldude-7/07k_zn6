@@ -216,10 +216,20 @@ dxf("front_plate_TB", cq.Workplane("XY").rect(depth_at(TB_X) - SHEET_T, BOX_H - 
     .circle(TB_BORE / 2).cutThruAll().faces(">Z").workplane().rect(TB_BOLT_SQUARE, TB_BOLT_SQUARE, forConstruction=True).vertices().circle(TB_BOLT_D / 2).cutThruAll().faces(">Z"))
 dxf("rear_plate", cq.Workplane("XY").rect(depth_at(X1 if CYL1_AT_ORIGIN else X0) - SHEET_T, BOX_H - 2 * SHEET_T).extrude(1).faces(">Z"))
 
+# one-piece folded U (top wall + roof + bottom wall) with bend lines, mm; inside bend radius 3 mm, K = 0.4
+R_in, T = 3.0, SHEET_T
+BA = math.pi / 2 * (R_in + 0.4 * T); BD = 2 * (R_in + T) - BA       # bend deduction per 90 deg bend
+h0, h1 = depth_at(X0), depth_at(X1)                                 # outside wall height at each end
+half0, half1 = h0 + BOX_H / 2 - BD, h1 + BOX_H / 2 - BD
+u = (cq.Workplane("XY").polyline([(0, -half0), (BOX_L, -half1), (BOX_L, half1), (0, half0)]).close().extrude(1).faces(">Z").workplane()
+     .pushPoints([(x - X0, depth_at(x) / 2 + (BOX_H / 2 + 1.5) - BD) for x, _ in bung_specs]).circle(4.35).cutThruAll())   # pilot holes for the bungs on the top wall
+# bend lines as thin slots of construction geometry (0.2 mm wide) so they show up in the DXF
+for sgn in (-1, 1):
+    u = u.faces(">Z").workplane().center(BOX_L / 2, sgn * (BOX_H / 2 - BD / 2)).rect(BOX_L - 20, 0.2).cutThruAll()
+dxf("U_folded_one_piece", u.faces(">Z"))
+
 # ---------------------------------------------------------------- report
 vol = (BOX_H - 2 * SHEET_T) * ((depth_at(X0) + depth_at(X1)) / 2 - SHEET_T) * (BOX_L - FRONT_PLATE_T - REAR_PLATE_T) / 1e6
-R_in, T = 3.0, SHEET_T
-BA = math.pi / 2 * (R_in + 0.4 * T); BD = 2 * (R_in + T) - BA
 print(f"merged body: {len(merged.solids().vals())} solid(s) (should be 1)")
 print(f"ports: 5 obround {PORT_W:.1f} x {PORT_H:.1f} on {PORT_X[1]-PORT_X[0]:.1f} mm centres")
 print(f"crushed tube end: outer obround {CB_W:.1f} x {CB_H:.1f}, inner {ID_W:.1f} x {ID_H:.1f}")
@@ -228,4 +238,4 @@ print(f"outermost point: Y = {Y_IN + D_FRONT:.0f} mm from the head face; throttl
 print(f"if you fold top wall + roof + bottom wall as one U from {T} mm sheet, inside radius {R_in}: bend deduction {BD:.1f} mm per bend -> flat width = 2 x wall + {BOX_H} - {2*BD:.1f} (bend a test strip first)")
 mb = merged.val().BoundingBox()
 print(f"overall envelope: X {mb.xmin:.0f}..{mb.xmax:.0f}, Y {mb.ymin:.0f}..{mb.ymax:.0f}, Z {mb.zmin:.0f}..{mb.zmax:.0f}")
-print("wrote", len(parts) + 2, "STEP files and 6 DXF flat patterns to", OUT)
+print("wrote", len(parts) + 2, "STEP files and 7 DXF flat patterns to", OUT)
