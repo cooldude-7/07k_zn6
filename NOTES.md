@@ -208,6 +208,23 @@ Second guide: wilkie.cole (Instagram). Core content matches; differences are mos
 ### Porsche transmission? No.
 944/968 uses a rear transaxle via torque tube (the 944 swap bellhousing bolts the 07K to that torque tube). 911/Boxster/Cayman boxes are rear/mid-engine transaxles. None fit a front-engine ZN6 layout.
 
+### RX-8 6-speed vs ZF 8HP on the 07K (researched Oct 4, 2026)
+*Full parts lists, prices and sources are in [`Gearbox_Options.xlsx`](Gearbox_Options.xlsx). Scope is the engine-to-gearbox job only; chassis parts (mounts, driveshaft, shifter, pedal) are excluded.*
+
+| | RX-8 6-speed (manual) | ZF 8HP50 (auto) |
+|---|---|---|
+| Cost, CAD incl. HST | **~$2.9k–5.4k** | **~$8.5k–11.7k** |
+| Adapter | RX8 Gearbox Adapters (UK): plate £140, bolts £35, spigot £10; in stock | DomiWorks kit $1,250–1,280 USD (plate + billet flywheel + centre guide) |
+| Proven on a 07K | Yes (Brett Horn's E30) | No BMW-8HP 07K/1.8T build found |
+| Fits the 07K block | Works in practice | Unconfirmed; ask DomiWorks |
+| Starter | Audi A4 1.9 TDI starter (068911024F) on the plate | Unknown |
+| Clutch | Audi B5/B6 1.8T single-mass flywheel + pressure plate, Ford 1"×23-spline 228 mm disc, concentric slave kit (£230) | Donor torque converter |
+| Electronics | None | Standalone TCU (TurboLamik, analog inputs from ME7), shifter, park-lock release, cooler |
+| Torque | ~300 lb-ft (~405 Nm) | 500 Nm (~369 lb-ft); 8HP70 = 700 Nm |
+| Weight | ~40–45 kg (estimate) | ~75–80 kg + 33 mm plate |
+
+**Verdict:** RX-8 for v1. It costs less than half as much, uses off-the-shelf parts, has been done on a 07K, and needs no electronics. The 8HP waits until DomiWorks confirms 07K fitment and a starter solution.
+
 ### Design difficulty: adapter to 8HP vs to BRZ trans
 - **Don't design the 8HP one** — it already exists (DomiWorks).
 - **ZN6 adapter is the easier design:** manual stack-up is well understood, no TCU, and the ZN6 bell side is already solved by K-swap kits (KPower K → ZN6 plate is a reference).
