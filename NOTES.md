@@ -215,15 +215,38 @@ Second guide: wilkie.cole (Instagram). Core content matches; differences are mos
 - **Plan:** design the ZN6 adapter for v1; DomiWorks 8HP kit as the upgrade path.
 
 ### Precedent: 07K on an RX-8 AZ6 (Brett Horn's E30 drift car)
-*Added Oct 4, 2026 from Brett Horn's YouTube build series. Only the titles and search snippets were checked; the videos themselves were not watched, so findings from inside them still need filling in.*
+*Added Oct 4, 2026. Sources: the descriptions, chapter lists and comment threads of Brett Horn's three videos (his own replies as @brett.mk2), plus the adapter maker's product pages. There are no captions on the videos, so the footage itself hasn't been reviewed. Anything about what's on screen is marked as a viewer comment.*
 
-- **What it is:** a 07K-swapped BMW E30 drift car running the **Mazda RX-8 6-speed**, an AZ6 like the ZN6's TL70. Videos so far: "MAZDA RX8 Transmission on a VOLKSWAGEN?", "Will The Volkswagen+Mazda Drivetrain for the BMW E30 Drift Car Work?", "More ISSUES with the 07k Swap BMW E30 Drift Car".
-- **Why it matters:** the closest thing yet to this project's drivetrain. Someone has already worked out the 07K crank → AZ6 clutch/input shaft stack-up: flywheel offset, pilot bearing, input shaft engagement and starter. This is the same problem as §13.
-- **What carries over:** the engine side (07K bolt pattern and crank flange, and how he handled pilot and flywheel) and the AZ6 clutch interface. The RX-8 uses a 240 mm clutch, the same size as the FC turbo and FD.
-- **What doesn't:** the RX-8 bellhousing uses the **13B rotary pattern** (same caveat as the GrabCAD scan in §15). His trans-side plate pattern won't bolt to a TL70. Input shaft nose length may also differ between AZ6 variants.
-- **RX-8 adapter market:** RX-8 boxes are a common swap target. PMC Motorsport (JZ, UZ, K), Collins and K64 sell plates for them, but none for the 07K. The RX-8 box is generally treated as an NA/mild-power gearbox, consistent with the ~280 lb-ft cap in the tune.
-- **Watch the "issues" video** for failure modes (clutch release, alignment, starter, mounts, vibration) before finalizing the adapter design.
-- **Ask Brett:** is the adapter plate/flywheel DIY or bought? Which 07K crank flange (6/8-bolt)? Is the flywheel stock VW, re-drilled Mazda, or custom? Which starter, and where? Which release bearing? Plate thickness? Would he share the engine-side CAD?
+**Videos:** [RX8 Transmission on a VOLKSWAGEN?](https://www.youtube.com/watch?v=W_twx5oCz6c) (Oct 2024) → [Will The Volkswagen+Mazda Drivetrain Work?](https://youtu.be/QIYwMtbhb1w) (Feb 2025) → [More ISSUES with the 07k Swap](https://www.youtube.com/watch?v=bqJBSB7oPi4) (Dec 2025).
+
+**The adapter: bought, not made.** From **RX8 Gearbox Adapters (UK)** ([rx8gearboxadapters.com](https://www.rx8gearboxadapters.com/)). Brett: *"The company is called 'RX8 Gearbox Adapters'"*. It's their **VW PD / 1.8T 20V → RX-8** plate. The 07K bolts to it because it shares the VW 4-cyl bell pattern (see "Key fact" above).
+- **RX8002**, upright/vertical mount: £140. Used in the first video.
+- **RX8049**, 20° mount: £155, made to order (~2 weeks). The second video swaps to this "to tilt the engine over at a 20° angle". VW's factory lean is 15°.
+- Sold separately: **RX8027** bolt kit, **RX8017** spigot (pilot) bearing.
+
+**What goes between the engine and the gearbox (the maker's recipe):**
+
+| Part | What it is |
+|---|---|
+| Starter | **Audi A4 5-speed longitudinal PD (TDI) starter**. Brett: "Audi longitudinal 1.8t starter" |
+| Flywheel | **Aftermarket single-mass DMF-replacement flywheel** for that Audi longitudinal PD/1.8T application (ring gear on the side the longitudinal starter needs) |
+| Pressure plate | Matching Audi/VW pressure plate for that flywheel |
+| Clutch disc | **Ford 23-spline friction plate** (fits the RX-8 input shaft). Brett runs a non-stock disc; Southbend Clutch is a sponsor |
+| Pilot bearing | RX8017 spigot bearing in the crank |
+| Release | Maker says the RX-8 clutch arm, slave and release bearing usually work with little modification (arm pivot height may need adjusting). **Brett couldn't use them** (see below) |
+
+**What went wrong (from his replies and the chapter titles):**
+1. **Clearance at the timing cover / vacuum pump.** Chapters: "Overcoming clearance issues", "Modifying the timing cover", "Resolving bolt alignment". The vacuum pump casting on the timing cover is in the way even with the pump deleted. Brett: *"It's the casting on the timing cover that's still in the way."*
+2. **The RX-8 external slave and clutch arm don't fit** because of that casting. He went to a **concentric (internal) slave cylinder**, then an **adjustable** one.
+3. **Clutch release never worked right in the car.** Video 3: "Adjustable slave cylinder" → "Removing engine for clutch" → "Inspecting clutch components". He had to pull the engine. Viewers point out that release-bearing-to-finger spacing has to be measured properly, and that a bigger (3/4") master cylinder may be needed for throw.
+4. **Ring gear warning (viewer comment, unconfirmed):** the flywheel in video 2 looked like a *transverse* one with the ring gear on the clutch side. A longitudinal starter engages from the engine side.
+5. Fiddly clutch disc alignment (no RX-8 alignment tool fits the VW crank); pedal box still undecided (probably Wilwood).
+
+**What it means for the ZN6 build:**
+- **The engine side is solved and cheap.** Copy the recipe: Audi longitudinal PD starter, a single-mass flywheel for the longitudinal Audi PD/1.8T, the VW pressure plate, and a disc with the **TL70's** input spline in the right diameter. Then only the plate and the stack-up (§13) are custom.
+- **The plate itself won't fit.** The RX-8 bell is the 13B pattern, not the TL70's. Two options: ask RX8 Gearbox Adapters to make a VW → ZN6/TL70 version (they already make made-to-order variants), or design ours with their VW side as a reference. They make the plate; a buyer could measure its VW-side bolt circle and dowels from one.
+- **Plan clutch actuation early.** Check the 07K timing cover / vacuum pump casting against the ZN6 bell and release fork before choosing the plate thickness. Budget for a concentric slave and measure engagement on the bench before the engine goes in.
+- **Possible question:** contact Brett (IG @brett.07k) about final release-bearing spacing, his flywheel part number, and whether the clutch works now.
 
 ---
 
@@ -391,7 +414,9 @@ The custom flywheel/hub is the part that absorbs the difference between the two 
 - Model the ZN6 bay in SolidWorks: engine, adapter, turbo/downpipe routing, oil pan vs subframe
 - Buy a **running** ZN6 so the stock CAN traffic can be logged
 - Secure garage space and machine shop access
-- Watch Brett Horn's 07K/RX-8 E30 series (esp. "More ISSUES"), fill in findings in §9, and contact him about his engine-side adapter/flywheel
+- Ask RX8 Gearbox Adapters (UK) whether they'd make a VW PD/1.8T → ZN6/TL70 plate; otherwise use their VW side as the reference
+- Confirm the TL70 clutch disc spline/diameter so a disc can be matched to the Audi PD single-mass flywheel + VW pressure plate
+- Check the 07K timing cover/vacuum pump casting against the ZN6 release fork and slave location (Brett had to go to a concentric slave)
 
 ---
 
@@ -474,6 +499,8 @@ The custom flywheel/hub is the part that absorbs the difference between the two 
 - [Brett Horn — More ISSUES with the 07k Swap BMW E30 Drift Car](https://www.youtube.com/watch?v=bqJBSB7oPi4)
 - [PMC Motorsport — RX-7/RX-8 gearbox adapter plates](https://pmcmotorsport-shop.com/eng_m_Transmission_Gearbox-Adapter-Plates_Mazda-RX-7-RX-8-Gearbox-Adapter-Plates-509.html)
 - [Collins — K-series to RX-8 adapter plate + flywheel](https://collinsperformancetechnologies.com/products/honda-k-series-to-mazda-rx-8-adapter-plate-flywheel-partial-swap-kit)
+- [RX8 Gearbox Adapters — VW PD/1.8T 20V vertical (RX8002)](https://www.rx8gearboxadapters.com/product-page/vw-pd-1-8t-20v-vertically-mounted)
+- [RX8 Gearbox Adapters — VW PD/1.8T 20V 20° (RX8049)](https://www.rx8gearboxadapters.com/product-page/copy-of-vw-pd-1-8t-20v-mounted-20degrees)
 - [R3VLimited — M20 to RX-8 6-speed adaptor plates](https://www.r3vlimited.com/board/forum/e30-technical-forums/general-technical/9868970-m20-rx8-6-speed-adaptor-plates)
 - [Brightstone — Custom adapter plates](https://brightstoneengineering.com/products/custom-gearbox-adapter-plates-precision-cnc-machined-in-the-uk)
 
