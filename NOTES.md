@@ -165,6 +165,26 @@ Second guide: wilkie.cole (Instagram). Core content matches; differences are mos
 - **Turbo tune:** 034 off-the-shelf for ME7 (8–9 psi stock intake; 15–20 psi with short-runner intake), or DIY.
 - **CAN bridge (your build):** microcontroller that reads the VW ECU (RPM, coolant temp, torque) and broadcasts the ZN6 messages the chassis expects — cluster, ABS/VSC, electric power steering, A/C. The proven VW ECU handles safety-critical throttle and knock control. Bridge code later becomes your ECU's CAN module.
 
+### Which VW ECU (researched Oct 4, 2026)
+
+| | Bosch ME7.1.1 | Bosch ME17.5 / 17.5.6 |
+|---|---|---|
+| Years / engines | 2005.5–2008 Rabbit/Jetta: BGP/BGQ 150 hp and **2008 CBTA/CBUA 170 hp (still ME7.1.1)**; 2006–10 New Beetle BPR/BPS | 2009–2014 CBTA/CBUA; ME17.5.6 from ~2012 |
+| Part numbers | **07K 906 032 xx** (2008 cars: 032BG/BH/BJ) | 07K 906 055 xx |
+| Air metering | MAF | MAP (speed density) |
+| Flash | K-line/KWP2000: OBD with a KKL cable, Galletto 1260 in boot mode; the free ME7 toolchain (NefMoto, ME7Sum, ME7Logger) is for this family, but no confirmed NefMoto write of an 07K906032 was found | 2009 OBD with commercial J2534 tools; 2010+ TriCore must be unlocked on the bench. VAGFlasher (open source) lists ME17.5 but not confirmed for the 07K |
+| Free definitions | None public for the 2.5 (ME7.1.1 damos exist in WinOLS packs) | None |
+| RevMap swap file | Yes, $140–195 (+$35 immo, +$20 MK4/B6/B7 pedal; MK5 pedal native) | Yes; RevMap prefers 17.5.6 for boost |
+| Off-the-shelf turbo tunes | **034** (8–9 psi stock intake; 15–20 psi with SRI + 85 mm MAF housing + 550 cc) and **UM** ($900–1,150), 2005–08 only | Custom only (UM, IE, Malone, RevMap) |
+| Immobilizer | Immo 4 in the cluster. ECU flash + external flash + EEPROM must agree: a plain EEPROM "immo off" starts once then stalls. Buy the delete (RevMap $35, 06A Technik $75) | Immo 4; delete $35–135, bench |
+| Used ECU | $90–225 | similar, but 2010+ locked |
+
+**Decision: ME7.1.1. Buy a 2008 Rabbit/Jetta engine (CBTA/CBUA, 170 hp) with its 07K906032B-series ECU, the 2008 engine harness and the MK5 pedal, all from the same car.** Reasons: only generation with off-the-shelf 15–20 psi turbo files; cheapest ECUs; the K-line ECU family the free ME7 tools target; MAF-based so the turbo tune scales with the 85 mm housing; 2008 gives the updated 170 hp long block while staying on ME7.1.1 (2 MB flash). Fallback: 2007 BGP/BGQ. Keep ECU and harness from the same model year. Flash path: RevMap swap file + immo delete (~$175–230), then 034/UM turbo file or RevMap custom; DIY edits only if a 2.5 XDF/damos turns up.
+
+**CAN (for the bridge), 500 kbit/s, documented in opendbc `vw_pq.dbc`:** the ECU broadcasts **0x280 Motor_1** (RPM 0.25 rpm/bit at bit 16, pedal 0.4 %/bit, inner and driver-request torque 0.39 %/bit, idle/clutch bits), **0x288 Motor_2** (coolant 0.75·x−48 °C, brake bits, cruise state), **0x380 Motor_3** (intake temp, pedal %, throttle %), **0x480 Motor_5** (MIL lamp, fuel consumption, fan %), **0x488 Motor_6** (torque for gearbox), **0x580**. It listens for **0x1A0 Bremse_1** (wheel speeds/brake), **0x320 Kombi_1** (vehicle speed, charge lamp), **0x38A GRA_Neu** (cruise). The swap file removes the DTCs for missing modules, but the ME17 swaps needed a VSS patch to avoid a ~3,800–4,000 rpm limit, so plan for the bridge to send Bremse_1/Kombi_1 with the ZN6's real speed (ME7.1.1 need unverified).
+
+**Harness gotchas (MK4 and Beetle swaps):** move pin 21 → 23 (main relay switched ground so the injectors fire), feed pin 21 from ignition hot-in-start/run, pin 3 constant 12 V or the engine won't shut off; MK5 ECU uses the T94 + T60 connectors; RevMap's Charles tool diffs pinouts. Momochi sells a $450 power-side swap harness for early ME7.1.1. The swap file may be a Beetle-firmware conversion of the Rabbit/Jetta ECU (RevMap does it); the stock file has bad rev hang, which the swap file addresses.
+
 ### Version 2: your own torque-based ECU
 - **Job 1 — run a turbo 07K:** trigger decoding, sequential injection, 5-coil ignition, wideband closed loop, boost control, **knock control**, **drive-by-wire safety** (redundant pedal/TPS plausibility checks, watchdog, limp mode).
 - **Job 2 — be a ZN6 ECU on CAN.** Torque-based architecture natively handles VSC torque-reduction requests.
